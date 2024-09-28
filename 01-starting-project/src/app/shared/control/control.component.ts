@@ -1,4 +1,7 @@
 import {
+  AfterContentInit,
+  afterNextRender,
+  afterRender,
   Component,
   ContentChild,
   contentChild,
@@ -20,12 +23,23 @@ import {
     '(click)': 'onClick()', //host listener
   },
 })
-export class ControlComponent {
+export class ControlComponent implements AfterContentInit {
   label = input.required<string>();
 
   //getting access to host element
   private el = inject(ElementRef);
 
+  constructor() {
+    // this is called whenever there is a change anywhere in the app
+    afterRender(() => {
+      console.log('afterRender');
+    });
+
+    // this is called just once.
+    afterNextRender(() => {
+      console.log('afterNextRender');
+    });
+  }
   // getting access to projected elements via @ContentChild() decorator
   // @ContentChild('input') private input?: ElementRef<
   //   HTMLTextAreaElement | HTMLInputElement
@@ -52,5 +66,9 @@ export class ControlComponent {
     console.log('clicked!');
     console.log(this.el);
     console.log(this.input());
+  }
+
+  ngAfterContentInit() {
+    console.log('AFTER CONTENT INIT');
   }
 }
