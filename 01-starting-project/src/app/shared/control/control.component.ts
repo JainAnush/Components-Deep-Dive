@@ -1,5 +1,7 @@
 import {
   Component,
+  ContentChild,
+  contentChild,
   ElementRef,
   inject,
   input,
@@ -24,6 +26,18 @@ export class ControlComponent {
   //getting access to host element
   private el = inject(ElementRef);
 
+  // getting access to projected elements via @ContentChild() decorator
+  // @ContentChild('input') private input?: ElementRef<
+  //   HTMLTextAreaElement | HTMLInputElement
+  // >;
+
+  /**
+   * getting access to projected elements via contentChild() (> angular 17)
+   * this returns a signal so use it like this.input() and not this.input
+   */
+  private input =
+    contentChild<ElementRef<HTMLTextAreaElement | HTMLInputElement>>('input');
+
   /**
    * using below syntax of host binding and host listener is discouraged!
    * Host Binding 
@@ -37,5 +51,6 @@ export class ControlComponent {
   onClick() {
     console.log('clicked!');
     console.log(this.el);
+    console.log(this.input());
   }
 }
