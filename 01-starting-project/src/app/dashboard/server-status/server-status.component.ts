@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-server-status',
@@ -7,11 +7,17 @@ import { Component } from '@angular/core';
   templateUrl: './server-status.component.html',
   styleUrl: './server-status.component.css',
 })
-export class ServerStatusComponent {
+export class ServerStatusComponent implements OnInit {
   currentStatus: 'online' | 'offline' | 'unknown' = 'online';
+  // private intervalId?: ReturnType<typeof setInterval>;'
 
+  /**
+   * using DestroyRef instead of ngOnDestroy is preferred.
+   * you can call multiple onDestroy mrnthod on destroyRef property in code.
+   */
+  private destroyRef = inject(DestroyRef);
   ngOnInit() {
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       let ran = Math.random();
       if (ran < 0.5) {
         this.currentStatus = 'online';
@@ -21,5 +27,13 @@ export class ServerStatusComponent {
         this.currentStatus = 'unknown';
       }
     }, 10000);
+
+    this.destroyRef.onDestroy(() => {
+      clearInterval(intervalId);
+    });
   }
+
+  // ngOnDestroy(): void {
+  //   clearInterval(this.intervalId);
+  // }
 }
